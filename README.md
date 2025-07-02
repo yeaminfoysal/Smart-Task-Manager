@@ -47,7 +47,7 @@ A beautiful, modern task management application built with Next.js that uses Goo
 ### Prerequisites
 
 - Node.js 18+ installed
-- A Google Gemini API key (free)
+- A Google Gemini API key
 
 ### 1. Get a Google Gemini API Key
 

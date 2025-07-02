@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Search, Brain, Sparkles } from 'lucide-react';
-import { createTask , updateTask, deleteTask, getTasks} from '@/lib/storage';
+import { createTask, updateTask, deleteTask, getTasks } from '@/lib/storage';
+import { Footer } from 'react-day-picker';
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -19,7 +20,7 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState<Task | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'completed'>('all');
-  
+
   useEffect(() => {
     const loadedTasks = getTasks();
     setTasks(loadedTasks);
@@ -99,7 +100,7 @@ export default function Home() {
         <div className={`absolute inset-0 pointer-events-none`} />
 
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 py-14">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
