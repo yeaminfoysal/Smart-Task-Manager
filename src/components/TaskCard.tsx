@@ -56,9 +56,16 @@ export function TaskCard({
     setLoadingSubtasks(true);
 
     try {
+      const prompt = `Break down this task into 3-5 smaller, actionable subtasks:
+
+Task: ${task.title}
+${task.description ? `Description: ${task.description}` : ''}
+
+Please provide only the subtasks as a simple list, each on a new line, without numbering or bullet points. Make them specific and actionable.`;
+
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
-        contents: `How can I do this: ${task.title}, ${task.description}? Please give me in 5-line plain text.`,
+        contents: prompt
       });
 
       const result = response.text;

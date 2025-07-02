@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Search, Brain, Sparkles } from 'lucide-react';
 import { createTask , updateTask, deleteTask, getTasks} from '@/lib/storage';
-// import { cn } from '@/app/lib/utils';
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -20,9 +19,6 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState<Task | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'completed'>('all');
-
-  console.log(process.env.GEMINI_API_KEY); // Uncomment if you want to log the env variable in Next.js
-  console.log(process?.env?.HELLO_WORLD); // Uncomment if you want to log the env variable in Next.js
   
   useEffect(() => {
     const loadedTasks = getTasks();
@@ -41,7 +37,6 @@ export default function Home() {
       );
     }
 
-    // Filter by status
     if (statusFilter !== 'all') {
       filtered = filtered.filter(task => task.status === statusFilter);
     }
@@ -148,7 +143,7 @@ export default function Home() {
               <SelectTrigger className="w-full sm:w-48 bg-[#1a1a1a] backdrop-blur-sm border-0 shadow-sm">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className='bg-[#1a1a1a]'>
                 <SelectItem value="all">All Tasks</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
@@ -174,8 +169,8 @@ export default function Home() {
                 className="text-center py-16"
               >
                 <div className="flex flex-col items-center gap-4">
-                  <div className="p-4 bg-gray-100 rounded-full">
-                    <Sparkles className="h-8 w-8 text-gray-400" />
+                  <div className="p-4 bg-[#1a1a1a] rounded-full">
+                    <Sparkles className="h-8 w-8 text-[#c8f31d]" />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">
