@@ -15,7 +15,7 @@ A beautiful, modern task management application built with Next.js that uses Goo
 
 ## 🚀 Technologies Used
 
-- **Next.js 13+** - React framework with App Router
+- **Next.js 15+** - React framework with App Router
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first CSS framework
 - **Framer Motion** - Animation library for React
