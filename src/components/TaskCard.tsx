@@ -133,7 +133,7 @@ Please provide only the subtasks as a simple list, each on a new line, without n
 
         <CardContent className="py-2">
           <div className="flex items-center gap-2 text-sm">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4"/>
             <span className={cn(isOverdue && "text-red-500 font-medium")}>
               {format(new Date(task.dueDate), 'MMM dd, yyyy')}
             </span>
