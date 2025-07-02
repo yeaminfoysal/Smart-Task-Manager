@@ -23,6 +23,25 @@ A beautiful, modern task management application built with Next.js that uses Goo
 - **Google Gemini API** - AI-powered task suggestions
 - **Lucide React** - Beautiful icons
 
+## 🎯 How to Use
+
+### Creating Tasks
+1. Click the "Add Task" button
+2. Fill in the task title, description (optional), and due date
+3. Click "Create Task"
+
+### AI Subtask Suggestions
+1. On any task card, click "Suggest Subtasks"
+2. The AI will analyze your task and provide 3-5 actionable subtasks
+3. View the suggestions by clicking the button again
+
+### Managing Tasks
+- **Complete**: Check the checkbox to mark as complete
+- **Edit**: Click the edit icon to modify task details
+- **Delete**: Click the trash icon to remove the task
+- **Search**: Use the search bar to find specific tasks
+- **Filter**: Use the status dropdown to filter by pending/completed
+
 ## 🛠️ Setup Instructions
 
 ### Prerequisites
@@ -55,7 +74,7 @@ npm install
 cp .env.example .env.local
 
 # Edit .env.local and add your API key
-GEMINI_API_KEY=your_gemini_api_key_here
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 ### 4. Run the Application
@@ -77,25 +96,6 @@ npm run build
 npm start
 ```
 
-## 🎯 How to Use
-
-### Creating Tasks
-1. Click the "Add Task" button
-2. Fill in the task title, description (optional), and due date
-3. Click "Create Task"
-
-### AI Subtask Suggestions
-1. On any task card, click "Suggest Subtasks"
-2. The AI will analyze your task and provide 3-5 actionable subtasks
-3. View the suggestions by clicking the button again
-
-### Managing Tasks
-- **Complete**: Check the checkbox to mark as complete
-- **Edit**: Click the edit icon to modify task details
-- **Delete**: Click the trash icon to remove the task
-- **Search**: Use the search bar to find specific tasks
-- **Filter**: Use the status dropdown to filter by pending/completed
-
 ## 🔧 API Routes
 
 - `POST /api/tasks/suggest-subtasks` - Generate AI subtask suggestions
@@ -104,7 +104,6 @@ npm start
 
 ```
 ├── app/                    # Next.js app directory
-│   ├── api/               # API routes
 │   ├── globals.css        # Global styles
 │   ├── layout.tsx         # Root layout
 │   └── page.tsx           # Home page
