@@ -4,21 +4,27 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Task } from '@/types/task';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card, CardContent, CardFooter, CardHeader, CardTitle
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Calendar, 
-  Edit2, 
-  Trash2, 
-  Brain, 
-  ChevronDown, 
+import {
+  Calendar,
+  Edit2,
+  Trash2,
+  Brain,
+  ChevronDown,
   ChevronUp,
-  Loader2 
+  Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-// import { cn } from '@/app/lib/utils';
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY!,
+});
 
 interface TaskCardProps {
   task: Task;
@@ -28,44 +34,47 @@ interface TaskCardProps {
   onUpdateSubtasks: (id: string, subtasks: string[]) => void;
 }
 
-export function TaskCard({ 
-  task, 
-  onEdit, 
-  onDelete, 
-  onToggleStatus, 
-  onUpdateSubtasks 
+export function TaskCard({
+  task,
+  onEdit,
+  onDelete,
+  onToggleStatus,
+  onUpdateSubtasks
 }: TaskCardProps) {
-  const [showSubtasks, setShowSubtasks] = useState(false);
-  const [loadingSubtasks, setLoadingSubtasks] = useState(false);
+  const [showSubtasks, setShowSubtasks] = useState<boolean>(false);
+  const [loadingSubtasks, setLoadingSubtasks] = useState<boolean>(false);
+  const [steps, setSteps] = useState<string[]>([]);
 
   const isOverdue = new Date(task.dueDate) < new Date() && task.status === 'pending';
 
   const handleSuggestSubtasks = async () => {
-    if (task.subtasks && task.subtasks.length > 0) {
-      setShowSubtasks(!showSubtasks);
+    if (steps.length > 0) {
+      setShowSubtasks(prev => !prev);
       return;
     }
 
     setLoadingSubtasks(true);
+
     try {
-      const response = await fetch('/api/tasks/suggest-subtasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          taskTitle: task.title,
-          taskDescription: task.description,
-        }),
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `How can I do this: ${task.title}, ${task.description}? Please give me in 5-line plain text.`,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate subtasks');
+      const result = response.text;
+      if (!result) {
+        setLoadingSubtasks(false);
+        return;
       }
+      const extractedSteps = result
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line && !/line/i.test(line))
+        .map(line => line.replace(/^\d+\.\s*/, ''));
 
-      const data = await response.json();
-      onUpdateSubtasks(task.id, data.subtasks);
+      setSteps(extractedSteps);
       setShowSubtasks(true);
+      onUpdateSubtasks(task.id, extractedSteps); // Optional: propagate update
     } catch (error) {
       console.error('Error generating subtasks:', error);
     } finally {
@@ -97,16 +106,13 @@ export function TaskCard({
               />
               <div className="flex-1 min-w-0">
                 <CardTitle className={cn(
-                  "text-lg font-semibold  transition-all duration-200",
-                  task.status === 'completed' && "line-through "
+                  "text-lg font-semibold transition-all duration-200",
+                  task.status === 'completed' && "line-through"
                 )}>
                   {task.title}
                 </CardTitle>
                 {task.description && (
-                  <p className={cn(
-                    "text-sm  mt-1 line-clamp-2",
-                    task.status === 'completed' && ""
-                  )}>
+                  <p className="text-sm mt-1 line-clamp-2">
                     {task.description}
                   </p>
                 )}
@@ -119,7 +125,7 @@ export function TaskCard({
         </CardHeader>
 
         <CardContent className="py-2">
-          <div className="flex items-center gap-2 text-sm ">
+          <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4" />
             <span className={cn(isOverdue && "text-red-500 font-medium")}>
               {format(new Date(task.dueDate), 'MMM dd, yyyy')}
@@ -132,7 +138,7 @@ export function TaskCard({
           </div>
 
           <AnimatePresence>
-            {showSubtasks && task.subtasks && task.subtasks.length > 0 && (
+            {showSubtasks && steps.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -140,9 +146,9 @@ export function TaskCard({
                 transition={{ duration: 0.3 }}
                 className="mt-4 space-y-2"
               >
-                <h4 className="font-medium ">Suggested Subtasks:</h4>
+                <h4 className="font-medium">Suggested Subtasks:</h4>
                 <div className="space-y-2">
-                  {task.subtasks.map((subtask, index) => (
+                  {steps.map((subtask, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -20 }}
@@ -174,7 +180,7 @@ export function TaskCard({
               ) : (
                 <Brain className="h-4 w-4" />
               )}
-              {task.subtasks && task.subtasks.length > 0 ? (
+              {steps.length > 0 ? (
                 <>
                   {showSubtasks ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                   Subtasks
